@@ -1,0 +1,2 @@
+require './poc'
+run Poc
