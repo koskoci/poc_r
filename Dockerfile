@@ -1,9 +1,11 @@
 FROM ruby:2.5-alpine
 LABEL maintainer="koskoci.balazs@gmail.com"
-EXPOSE 8080
+EXPOSE 4567
 
-ADD views/start.haml views/start.haml
-ADD app.rb app.rb
-ADD config.ru config.ru
+WORKDIR /usr/src/app
+COPY Gemfile Gemfile.lock ./
+RUN gem install bundler
+RUN bundle install
+COPY . .
 
-CMD rackup
+CMD ["rackup", "-s", "webrick", "-p", "4567", "-o", "0.0.0.0"]
