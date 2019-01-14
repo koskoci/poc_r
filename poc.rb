@@ -1,5 +1,6 @@
 require 'sinatra/base'
 require 'sinatra/json'
+require 'redis'
 
 class Poc < Sinatra::Base
   get '/hello' do
@@ -13,6 +14,24 @@ class Poc < Sinatra::Base
   end
 
   post '/echo' do
-    json JSON.parse(request.body.read)
+    request.body.read
+  end
+
+  post '/keys' do
+    body = JSON.parse(request.body.read)
+    redis.set(body.keys.first, body.values.first)
+  end
+
+  get '/keys/:key' do
+    key = params['key']
+    value = redis.get(key)
+
+    json key.to_sym => value
+  end
+
+  private
+
+  def redis
+    @_redis ||= Redis.new
   end
 end
